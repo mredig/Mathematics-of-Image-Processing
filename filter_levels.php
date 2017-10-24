@@ -5,6 +5,7 @@
 
 // load image
 $image1 = imagecreatefromjpeg("lighthouse.jpg");
+// $image1 = imagecreatefromjpeg("http://localhost/lighthouse.jpg");
 
 // get image dimensions for creating the final output canvas
 $dx = imagesx($image1);
@@ -21,7 +22,7 @@ imagejpeg($result);
 imagedestroy($result);
 imagedestroy($image1);
 
-function filterImage(&$imageInput, &$resultImage, $blackPoint = 50, $whitePoint = 200) {
+function filterImage(&$imageInput, &$resultImage) {
 	$dx = imagesx($imageInput);
 	$dy = imagesy($imageInput);
 
@@ -38,24 +39,9 @@ function filterImage(&$imageInput, &$resultImage, $blackPoint = 50, $whitePoint 
 			$b = $rgbColor & 0xFF;
 			imagecolordeallocate($imageInput, $rgbColor);
 
-			// blackPoint
-			$r -= $blackPoint;
-			$r *= 255 / (255 - $blackPoint);
-			$g -= $blackPoint;
-			$g *= 255 / (255 - $blackPoint);
-			$b -= $blackPoint;
-			$b *= 255 / (255 - $blackPoint);
-
-			//whitePoint
-			$r *= 255 / $whitePoint;
-			$g *= 255 / $whitePoint;
-			$b *= 255 / $whitePoint;
-
-
-
-			$rOut = round(max(min($r, 255), 0));// make sure values are integral and do not exceed 255 or go below 0
-			$gOut = round(max(min($g, 255), 0));
-			$bOut = round(max(min($b, 255), 0));
+			$rOut = $r;
+			$gOut = $g;
+			$bOut = $b;
 			//// forumla ends here!
 
 			$theColor = imagecolorallocate($resultImage, $rOut, $gOut, $bOut);
