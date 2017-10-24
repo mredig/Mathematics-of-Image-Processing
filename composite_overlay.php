@@ -5,7 +5,7 @@
 
 // load image
 $image1 = imagecreatefromjpeg("cat.jpg");
-$image2 = imagecreatefromjpeg("multiply.jpg");
+$image2 = imagecreatefromjpeg("overlayA.jpg");
 // $image1 = imagecreatefromjpeg("http://localhost/lighthouse.jpg");
 
 // get image dimensions for creating the final output canvas
@@ -47,9 +47,10 @@ function compositeImages(&$imageInput1, &$imageInput2) {
 			//// formula goes here!
 
 
-			$rOut = $r1;
-			$gOut = $g1;
-			$bOut = $b1;
+			$rOut = overlayAlg($r1, $r2);
+			$gOut = overlayAlg($g1, $g2);
+			$bOut = overlayAlg($b1, $b2);
+
 			//// forumla ends here!
 
 			$theColor = imagecolorallocate($imageInput1, $rOut, $gOut, $bOut);
@@ -57,6 +58,29 @@ function compositeImages(&$imageInput1, &$imageInput2) {
 			imagecolordeallocate($imageInput1, $theColor);
 
 		}
+	}
+}
+
+function overlayAlg($valueA, $valueB) {
+	if ($valueA < 127) {
+		//// broken down
+		// $newValue = $valueA * $valueB * 2;
+		// $newValue /= 255;
+		// $newValue = min(255, $newValue);
+		// return $newValue;
+		//// one line
+		return min($valueA * $valueB * 2 / 255, 255);
+	} else {
+		//// broken down
+		// $invertA = 255 - $valueA;
+		// $invertB = 255 - $valueB;
+		// $newValue = $invertA * $invertB * 2;
+		// $newValue /= 255;
+		// $newValue = 255 - $newValue;
+		// $newValue = max(0, $newValue);
+		// return $newValue;
+		//// one line
+		return max(255 - (2 * (255 - $valueA) * (255 - $valueB) / 255), 0);
 	}
 }
 
