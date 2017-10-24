@@ -5,7 +5,7 @@
 
 // load image
 $image1 = imagecreatefromjpeg("cat.jpg");
-$image2 = imagecreatefromjpeg("add.jpg");
+$image2 = imagecreatefromjpeg("multiply.jpg");
 // $image1 = imagecreatefromjpeg("http://localhost/lighthouse.jpg");
 
 // get image dimensions for creating the final output canvas
@@ -51,9 +51,9 @@ function compositeImages(&$imageInput1, &$imageInput2) {
 			//// formula goes here!
 
 
-			$rOut = max(min($r1 + $r2, 255), 0);
-			$gOut = max(min($g1 + $g2, 255), 0);
-			$bOut = max(min($b1 + $b2, 255), 0);
+			$rOut = $r1;
+			$gOut = $g1;
+			$bOut = $b1;
 			//// forumla ends here!
 
 			$theColor = imagecolorallocate($imageInput1, $rOut, $gOut, $bOut);
