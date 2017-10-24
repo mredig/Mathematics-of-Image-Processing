@@ -13,7 +13,7 @@ $dy = imagesy($image1);
 $result = imagecreatetruecolor($dx, $dy);
 
 // run the filter
-filterImage($image1, $result, 7);
+filterImage($image1, $result, 20);
 
 // send results to client
 header('Content-Type: image/jpeg');
@@ -22,7 +22,6 @@ imagedestroy($result);
 imagedestroy($image1);
 
 
-// sourced from http://blog.ivank.net/fastest-gaussian-blur.html
 
 function filterImage(&$imageInput, &$resultImage, $blurAmount = 5) {
 	$dx = imagesx($imageInput);
@@ -53,9 +52,9 @@ function filterImage(&$imageInput, &$resultImage, $blurAmount = 5) {
 	$gTarget = array();
 	$bTarget = array();
 
-	boxBlur($rSource, $rTarget, $dx, $dy, $blurAmount);
-	boxBlur($gSource, $gTarget, $dx, $dy, $blurAmount);
-	boxBlur($bSource, $bTarget, $dx, $dy, $blurAmount);
+	gaussBlur($rSource, $rTarget, $dx, $dy, $blurAmount);
+	gaussBlur($gSource, $gTarget, $dx, $dy, $blurAmount);
+	gaussBlur($bSource, $bTarget, $dx, $dy, $blurAmount);
 
 
 	for ($i=0; $i < count($rTarget); $i++) {
@@ -71,6 +70,32 @@ function filterImage(&$imageInput, &$resultImage, $blurAmount = 5) {
 
 }
 
+// sourced from http://blog.ivank.net/fastest-gaussian-blur.html
+
+function boxesForGauss($blurSigma, $boxCount) { //this function is magic and determines the approximate values needed to run a box blur $boxCount times to achieve a gaussianBlur equivalent at $blurSigma radius - don't ask about the math
+	$wIdeal = sqrt(((12 * $blurSigma * $blurSigma) / $boxCount) + 1);
+	$wl = intval(floor($wIdeal));
+
+	if ($wl % 2 == 0) $wl--;
+	$wu = $wl + 2;
+
+	$mIdeal = (12 * $blurSigma * $blurSigma  -  $boxCount * $wl * $wl  -  4 * $boxCount * $wl  -  3 * $boxCount) / (-4 * $wl  -  4);
+	$m = intval(round($mIdeal));
+
+	$sizes = array();
+	for ($i=0; $i < $boxCount; $i++) {
+		$sizes[] = $i < $m ? $wl:$wu;
+	}
+
+	return $sizes;
+}
+
+function gaussBlur (&$sourceChannelArray, &$targetChannelArray, $width, $height, $r) {
+	$boxRadii = boxesForGauss($r, 3); //derive box blur valus from desired radius input, then run multiple, smaller box blurs
+	boxBlur($sourceChannelArray, $targetChannelArray, $width, $height, ($boxRadii[0]-1)/2);
+	boxBlur($targetChannelArray, $sourceChannelArray, $width, $height, ($boxRadii[1]-1)/2);
+	boxBlur($sourceChannelArray, $targetChannelArray, $width, $height, ($boxRadii[2]-1)/2);
+}
 
 function boxBlur(&$sourceChannelArray, &$targetChannelArray, $width, $height, $boxRadius) {
 	for ($i=0; $i < count($sourceChannelArray); $i++) {
