@@ -5,7 +5,6 @@
 
 // load image
 $image1 = imagecreatefromjpeg("lighthouse.jpg");
-// $image1 = imagecreatefromjpeg("http://localhost/lighthouse.jpg");
 
 // get image dimensions for creating the final output canvas
 $dx = imagesx($image1);
@@ -26,6 +25,10 @@ function filterImage(&$imageInput, &$resultImage) {
 	$dx = imagesx($imageInput);
 	$dy = imagesy($imageInput);
 
+	$rWeight = 0.3;
+	$gWeight = 0.59;
+	$bWeight = 0.11;
+
 	for ($y=0; $y < $dy; $y++) {
 		for ($x=0; $x < $dx; $x++) {
 			//// formula goes here!
@@ -39,17 +42,17 @@ function filterImage(&$imageInput, &$resultImage) {
 			$b = $rgbColor & 0xFF;
 			imagecolordeallocate($imageInput, $rgbColor);
 
+			$rTemp = round($r * $rWeight);
+			$gTemp = round($g * $gWeight);
+			$bTemp = round($b * $bWeight);
 
+			$lOut = $rTemp + $gTemp + $bTemp;
 
-			$rOut = $r;
-			$gOut = $g;
-			$bOut = $b;
 			//// forumla ends here!
 
-			$theColor = imagecolorallocate($resultImage, $rOut, $gOut, $bOut);
+			$theColor = imagecolorallocate($resultImage, $lOut, $lOut, $lOut);
 			imagesetpixel($resultImage, round($x),round($y), $theColor);
 			imagecolordeallocate($resultImage, $theColor);
-
 		}
 	}
 }
