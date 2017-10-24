@@ -47,9 +47,9 @@ function compositeImages(&$imageInput1, &$imageInput2) {
 			//// formula goes here!
 
 
-			$rOut = $r1;
-			$gOut = $g1;
-			$bOut = $b1;
+			$rOut = $r1 * $r2 / 255;
+			$gOut = $g1 * $g2 / 255;
+			$bOut = $b1 * $b2 / 255;
 			//// forumla ends here!
 
 			$theColor = imagecolorallocate($imageInput1, $rOut, $gOut, $bOut);
