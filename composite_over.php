@@ -4,9 +4,8 @@
 // error_reporting(E_ALL);
 
 // load image
-$image1 = imagecreatefromjpeg("background.jpg");
-$image2 = imagecreatefromjpeg("foreground.jpg");
-$mask = imagecreatefromjpeg("mask.jpg");
+$image1 = imagecreatefromjpeg("cat.jpg");
+$image2 = imagecreatefromjpeg("multiply.jpg");
 // $image1 = imagecreatefromjpeg("http://localhost/lighthouse.jpg");
 
 // get image dimensions for creating the final output canvas
@@ -15,7 +14,7 @@ $dy = imagesy($image1); //we are assuming image1 and image2 are the same size
 
 
 // run the filter
-compositeImages($image1, $image2, $mask);
+compositeImages($image1, $image2);
 
 // send results to client
 header('Content-Type: image/jpeg');
@@ -27,7 +26,7 @@ imagedestroy($image1);
 // http://photoblogstop.com/photoshop/photoshop-blend-modes-explained
 // https://en.wikipedia.org/wiki/Blend_modes
 
-function compositeImages(&$imageInput1, &$imageInput2, &$maskInput) {
+function compositeImages(&$imageInput1, &$imageInput2) {
 	$dx = imagesx($imageInput1);
 	$dy = imagesy($imageInput1);
 
@@ -49,17 +48,12 @@ function compositeImages(&$imageInput1, &$imageInput2, &$maskInput) {
 			$b2 = $rgbColor & 0xFF;
 			imagecolordeallocate($imageInput2, $rgbColor);
 
-			$rgbColor = imagecolorat($maskInput, $sampleX, $sampleY);
-			$maskValue = $rgbColor & 0xFF;
-			$maskInvert = 255 - $maskValue;
-			imagecolordeallocate($maskInput, $rgbColor);
-
 			//// formula goes here!
 
 
-			$rOut = ($r1 * $maskInvert / 255) + ($r2 * $maskValue / 255);
-			$gOut = ($g1 * $maskInvert / 255) + ($g2 * $maskValue / 255);
-			$bOut = ($b1 * $maskInvert / 255) + ($b2 * $maskValue / 255);
+			$rOut = $r1;
+			$gOut = $g1;
+			$bOut = $b1;
 			//// forumla ends here!
 
 			$theColor = imagecolorallocate($imageInput1, $rOut, $gOut, $bOut);
