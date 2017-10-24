@@ -5,6 +5,7 @@
 
 // load image
 $image1 = imagecreatefromjpeg("lighthouse.jpg");
+// $image1 = imagecreatefromjpeg("http://localhost/lighthouse.jpg");
 
 // get image dimensions for creating the final output canvas
 $dx = imagesx($image1);
@@ -29,27 +30,8 @@ function filterImage(&$imageInput, &$resultImage) {
 		for ($x=0; $x < $dx; $x++) {
 			//// formula goes here!
 
-			$offsetX = -90;
-			$offsetY = 60;
-
-			$sampleX = $x + $offsetX;
-			$sampleY = $y + $offsetY;
-
-			while ($sampleX >= $dx) {
-				$sampleX -= $dx;
-			}
-
-			while ($sampleX < 0) {
-				$sampleX += $dx;
-			}
-
-			while ($sampleY >= $dy) {
-				$sampleY -= $dy;
-			}
-
-			while ($sampleY < 0) {
-				$sampleY += $dy;
-			}
+			$sampleX = $x;
+			$sampleY = $y;
 
 			$rgbColor = imagecolorat($imageInput, $sampleX, $sampleY);
 			$r = ($rgbColor >> 16) & 0xFF; //getting other color values
@@ -58,9 +40,13 @@ function filterImage(&$imageInput, &$resultImage) {
 			imagecolordeallocate($imageInput, $rgbColor);
 
 
+
+			$rOut = $r;
+			$gOut = $g;
+			$bOut = $b;
 			//// forumla ends here!
 
-			$theColor = imagecolorallocate($resultImage, $r, $g, $b);
+			$theColor = imagecolorallocate($resultImage, $rOut, $gOut, $bOut);
 			imagesetpixel($resultImage, round($x),round($y), $theColor);
 			imagecolordeallocate($resultImage, $theColor);
 		}
